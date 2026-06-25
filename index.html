@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para la persona que amo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fdf2ee; 
+            font-family: 'Courier New', Courier, monospace; 
+            color: #4a3b32;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            width: 90%;
+            max-width: 1000px;
+            height: 70%;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Contenedor principal del árbol */
+        .tree-container {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        /* --- TRONCO --- */
+        .trunk {
+            width: 50px;
+            height: 0px; /* Inicia en 0 para la animación */
+            background: linear-gradient(90deg, #3a2318, #5c3a21, #3a2318);
+            border-radius: 10px 10px 0 0;
+            position: absolute;
+            bottom: 30px;
+            clip-path: polygon(15% 0, 85% 0, 100% 100%, 0% 100%);
+            z-index: 5;
+            transition: height 1.5s ease-out;
+        }
+
+        /* --- RAMAS --- */
+        .branch {
+            position: absolute;
+            background: linear-gradient(90deg, #4a2f1d, #6b4529);
+            border-radius: 10px;
+            transform-origin: bottom center;
+            transform: scaleY(0) rotate(var(--rot)); /* Inician en escala 0 */
+            opacity: 0;
+            transition: transform 1.2s ease-out, opacity 0.5s ease-in;
+            z-index: 4;
+        }
+
+        /* Posiciones exactas de las ramas para dar soporte al corazón */
+        .b1 { width: 15px; height: 160px; left: calc(50% - 7px); bottom: 180px; --rot: -35deg; }
+        .b2 { width: 15px; height: 160px; left: calc(50% - 7px); bottom: 180px; --rot: 35deg; }
+        .b3 { width: 12px; height: 140px; left: calc(50% - 6px); bottom: 200px; --rot: -60deg; }
+        .b4 { width: 12px; height: 140px; left: calc(50% - 6px); bottom: 200px; --rot: 60deg; }
+        .b5 { width: 10px; height: 120px; left: calc(50% - 5px); bottom: 230px; --rot: -20deg; }
+        .b6 { width: 10px; height: 120px; left: calc(50% - 5px); bottom: 230px; --rot: 20deg; }
+        .b7 { width: 8px; height: 100px; left: calc(50% - 4px); bottom: 260px; --rot: -45deg; }
+        .b8 { width: 8px; height: 100px; left: calc(50% - 4px); bottom: 260px; --rot: 45deg; }
+
+        /* Clases activas para la animación */
+        .trunk.grow { height: 180px; }
+        .branch.grow { transform: scaleY(1) rotate(var(--rot)); opacity: 1; }
+
+        /* --- CORAZONES (HOJAS) --- */
+        .heart-leaf {
+            position: absolute;
+            font-size: 24px; /* Tamaño de los corazones */
+            opacity: 0;
+            transform: scale(0) rotate(0deg);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 6;
+            user-select: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2); /* Sombra para dar volumen de hoja 3D */
+        }
+
+        /* --- LADO DERECHO Y MENSAJES --- */
+        .content-right {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .love-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .custom-img {
+            width: 260px;
+            border-radius: 20px; 
+            box-shadow: 0 12px 28px rgba(0,0,0,0.2); 
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .special-message {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #d65a72; 
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 5px rgba(255, 182, 193, 0.8);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Corazones flotantes de fondo */
+        .floating-heart {
+            position: absolute;
+            color: #ff8fa3;
+            opacity: 0.4;
+            animation: floatUp 5s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.4; }
+            100% { transform: translateY(-150px) scale(0.6) rotate(45deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="tree-container" id="tree">
+            <div class="trunk" id="trunk"></div>
+            <div class="branch b1"></div>
+            <div class="branch b2"></div>
+            <div class="branch b3"></div>
+            <div class="branch b4"></div>
+            <div class="branch b5"></div>
+            <div class="branch b6"></div>
+            <div class="branch b7"></div>
+            <div class="branch b8"></div>
+            </div>
+
+        <div class="content-right">
+            <div class="love-text">
+                Para la persona que amo: Si<br>
+                pudiera elegir un lugar<br>
+                seguro, sería a tu lado.<br>
+                Cuanto más tiempo estoy<br>
+                contigo, más te amo...
+            </div>
+            
+            <img src="image_f7cde0.jpg" alt="Hello Kitty y Spider-Man" class="custom-img">
+        </div>
+    </div>
+
+    <div class="special-message">
+        FELIZ DIA DE LA NOVIA 💗
+    </div>
+
+    <script>
+        const treeContainer = document.getElementById('tree');
+        const trunk = document.getElementById('trunk');
+        const branches = document.querySelectorAll('.branch');
+        
+        // Colores extraídos de la imagen original (varios tonos de rojo y rosa)
+        const coloresCorazones = ['#e63946', '#ff4d6d', '#ff758f', '#ff8fa3', '#c9184a', '#a01a58', '#ffb3c1'];
+        
+        // 1. ANIMACIÓN DEL TRONCO Y RAMAS
+        setTimeout(() => {
+            trunk.classList.add('grow'); // Crece el tronco
+        }, 500);
+
+        setTimeout(() => {
+            branches.forEach(branch => branch.classList.add('grow')); // Nacen las ramas
+        }, 1500);
+
+        // 2. LÓGICA DE CREACIÓN DEL CORAZÓN (DE ABAJO HACIA ARRIBA)
+        function crearCopaCorazon() {
+            const cantidadCorazones = 450; // Cantidad de hojas
+            const corazonesData = [];
+
+            // Generar las posiciones matemáticas primero
+            for (let i = 0; i < cantidadCorazones; i++) {
+                const t = Math.random() * Math.PI * 2; 
+                const intensidad = Math.sqrt(Math.random()); // Distribución uniforme hacia los bordes
+                
+                // Ecuación paramétrica del corazón
+                const xMeta = 16 * Math.pow(Math.sin(t), 3);
+                const yMeta = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+                
+                const escalaCopa = 11; // Qué tan grande es el corazón
+                
+                const x = xMeta * intensidad * escalaCopa;
+                const y = yMeta * intensidad * escalaCopa;
+                const rotacion = Math.random() * 60 - 30; // Rotación de la hoja
+
+                corazonesData.push({ x, y, rotacion });
+            }
+
+            // *** CLAVE: Ordenar de abajo hacia arriba (menor Y a mayor Y) ***
+            corazonesData.sort((a, b) => a.y - b.y);
+
+            // Inyectar en el DOM con un retraso secuencial
+            corazonesData.forEach((dato, index) => {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '❤';
+                    heart.className = 'heart-leaf';
+                    
+                    // Asignar color aleatorio
+                    heart.style.color = coloresCorazones[Math.floor(Math.random() * coloresCorazones.length)];
+                    
+                    // Posicionamiento sobre las ramas
+                    heart.style.left = `calc(50% + ${dato.x}px)`;
+                    heart.style.bottom = `${300 + dato.y}px`; // 300 es la altura base donde terminan las ramas
+                    
+                    treeContainer.appendChild(heart);
+
+                    // Pequeño delay para que la transición de CSS surta efecto visualmente
+                    requestAnimationFrame(() => {
+                        heart.style.transform = `scale(${Math.random() * 0.5 + 0.8}) rotate(${dato.rotacion}deg)`; 
+                        heart.style.opacity = '1';
+                    });
+
+                }, index * 10); // 10ms de diferencia entre cada corazón (efecto de relleno fluido)
+            });
+        }
+
+        // Iniciar la creación de los corazones justo después de que las ramas terminan de crecer
+        setTimeout(crearCopaCorazon, 2800);
+
+        // 3. FONDO ANIMADO ESTÁTICO (CORAZONES FLOTANTES)
+        setInterval(() => {
+            const bgHeart = document.createElement('div');
+            bgHeart.innerHTML = '❤';
+            bgHeart.className = 'floating-heart';
+            bgHeart.style.left = Math.random() * 100 + 'vw';
+            bgHeart.style.bottom = '-20px';
+            bgHeart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+            document.body.appendChild(bgHeart);
+            
+            setTimeout(() => bgHeart.remove(), 5000);
+        }, 300);
+    </script>
+</body>
+</html>
